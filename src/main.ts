@@ -24,7 +24,7 @@ async function bootstrap() {
 
   // get port from environment variables or use default
   const configService = app.get<AppConfigService>(AppConfigService);
-  const port = process.env.PORT || 1339;
+  const port = normalizePort(configService.port);
 
   await app.listen(port);
   logger.log(`Skill Quest API v${version} started`);
