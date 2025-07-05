@@ -6,6 +6,6 @@ export class AppConfigService {
   constructor(private configService: ConfigService) {}
 
   get port(): number | string {
-    return this.configService.get<number>('PORT') || 1338;
+    return this.configService.get<number>('PORT') || 1339;
   }
 }
