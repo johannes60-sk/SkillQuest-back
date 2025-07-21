@@ -17,6 +17,7 @@ enum SkillStatus {
   IN_PROGRESS
   COMPLETED
   NOT_STARTED
+  DRAFT
 }
 
 enum QuestStatus {
@@ -51,20 +52,21 @@ model User {
 
 model Skill {
   id                  String   @id @default(uuid())
+  skillId             String   @unique
   title               String
   description         String?
   difficulty          Difficulty
   completionTime DateTime?
-  status              SkillStatus
+  status              SkillStatus @default(DRAFT)
   userId              String
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   quests Quest[]
 }
 
 model Quest {
   id                 String      @id @default(uuid())
-  questId            String
+  questId            String      @unique
   title              String
   description        String?
   difficulty         Difficulty
@@ -76,19 +78,21 @@ model Quest {
   position           Json  
   skillId            String
 
-  skill       Skill            @relation(fields: [skillId], references: [id])
+  skill       Skill            @relation(fields: [skillId], references: [id], onDelete: Cascade)
   parentRelations QuestRelation[]  @relation("ChildQuest")
   childRelations  QuestRelation[]  @relation("ParentQuest")
   workSessionLinks WorkSessionQuest[]
 }
 
-model QuestRelation {
-  id            String @id @default(uuid())
-  parentQuestId String
-  childQuestId  String
 
-  parentQuest Quest @relation("ParentQuest", fields: [parentQuestId], references: [id])
-  childQuest  Quest @relation("ChildQuest", fields: [childQuestId], references: [id])
+model QuestRelation {
+  id              String @id @default(uuid())
+  questRelationId String @unique
+  parentQuestId   String
+  childQuestId    String
+
+  parentQuest Quest @relation("ParentQuest", fields: [parentQuestId], references: [id], onDelete: Cascade)
+  childQuest  Quest @relation("ChildQuest", fields: [childQuestId], references: [id], onDelete: Cascade)
 }
 
 model Trophy {
@@ -110,7 +114,7 @@ model UserTrophy {
   userId    String?
 
   trophy Trophy @relation(fields: [trophyId], references: [id])
-  user   User?   @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Challenge {
@@ -144,7 +148,7 @@ model UserStats {
   maxSessionStreak Int?
   userId           String @unique
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model WorkSession {
@@ -156,7 +160,7 @@ model WorkSession {
   focusLevel      Int?
   userId          String
 
-  user      User               @relation(fields: [userId], references: [id])
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   quests    WorkSessionQuest[]
 }
 
@@ -165,8 +169,8 @@ model WorkSessionQuest {
   questId        String
   workSessionId  String
 
-  quest        Quest?       @relation(fields: [questId], references: [id])
-  workSession  WorkSession? @relation(fields: [workSessionId], references: [id])
+  quest        Quest?       @relation(fields: [questId], references: [id], onDelete: Cascade)
+  workSession  WorkSession? @relation(fields: [workSessionId], references: [id], onDelete: Cascade)
 }
 
 model Avatar {
@@ -174,5 +178,5 @@ model Avatar {
   urlImage String?
   userId   String? @unique
 
-  user User? @relation(fields: [userId], references: [id])
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

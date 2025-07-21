@@ -30,7 +30,8 @@ export class CreateQuestDto {
   difficulty: Difficulty;
 
   @IsNumber()
-  degree: number;
+  @IsOptional()
+  degree?: number;
 
   @IsNumber()
   xp: number;
@@ -49,4 +50,10 @@ export class CreateQuestDto {
 
   @IsString()
   skillId: string;
+}
+
+export class QuestRelationDto {
+  questRelationId: string;
+  parentQuestId: string;
+  childQuestId: string;
 }
